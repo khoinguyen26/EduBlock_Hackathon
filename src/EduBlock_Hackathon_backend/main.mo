@@ -43,6 +43,7 @@ actor {
 
   private type Student = {
     grades : [var StudentGrade];
+    information : StudentInformation;
   };
 
   /**

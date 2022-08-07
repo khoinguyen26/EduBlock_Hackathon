@@ -1,12 +1,15 @@
-# EduBlock_Hackathon
+---
+title: EduBlock Hackathon
+---
+
+# EduBlock Hackathon
 
 A student record system for FPT Edu Hackathon 2022
 
 ## Note
 
-### Import the `owner` principal
-1. `dfx identity import owner pem-file/owner.pem`
-2. Type passphrase : `Test1234`
-3. Use the principal
-   * `dfx identity use owner`
-   * Type passphrase : `Test1234`
+1. `dfx identity new --disable-encryption owner`
+1. `dfx identity use owner`
+1. `dfx start --clean`
+1. `dfx deploy backend --argument $(dfx identity get-principal)`
+1. `dfx deploy`

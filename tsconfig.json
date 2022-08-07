@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "src",
+    "esModuleInterop": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM"],
+    "module": "NodeNext",
+    "outDir": "dist/frontend",
+    "paths": {
+      "@be/*": ["declarations/*"],
+      "@fe/*": ["frontend/src/*"]
+    },
+    "resolveJsonModule": true,
+    "target": "ESNext"
+  },
+  "exclude": ["src/declarations/**/*.did", "**/dist"],
+  "include": ["src/**/*"]
+}

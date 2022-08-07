@@ -45,6 +45,8 @@
     "last 2 edge version"
   ],
   "dependencies": {
+    "@connect2ic/core": "^0.1.6",
+    "@connect2ic/react": "^0.1.4",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@fontsource/roboto": "^4.5.7",

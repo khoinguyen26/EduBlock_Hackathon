@@ -1,6 +1,8 @@
-import { Box, Button, Link, Stack, Typography } from '@mui/material'
+import { useConnect } from '@connect2ic/react'
+import { Box, Button, Stack, Typography } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import { Link as RouterLink, Outlet } from 'react-router-dom'
+import { Header } from './components'
 const TEXT = {
   HOME: 'Home',
   HEADER: 'Header',
@@ -9,6 +11,7 @@ const TEXT = {
 }
 
 export function NormalLayout() {
+  const { principal } = useConnect()
   return (
     <Box
       width={'100%'}
@@ -26,19 +29,7 @@ export function NormalLayout() {
         gridArea={'header'}
         bgcolor={grey[100]}
       >
-        <Stack
-          direction={'row'}
-          width={'100%'}
-          height={'100%'}
-          alignItems={'center'}
-        >
-          <Link
-            component={RouterLink}
-            to={'/'}
-          >
-            <Typography>{TEXT.ROOT}</Typography>
-          </Link>
-        </Stack>
+        <Header />
       </Box>
       {/* aside (vertical nav) */}
       <Box
@@ -65,7 +56,16 @@ export function NormalLayout() {
         gridArea={'footer'}
         bgcolor={grey[100]}
       >
-        <Typography>{TEXT.FOOTER}</Typography>
+        <Stack
+          width={'100%'}
+          height={'100%'}
+          direction={'row'}
+          alignItems={'center'}
+          justifyContent={'space-between'}
+        >
+          <Typography>{TEXT.FOOTER}</Typography>
+          <Typography>{principal}</Typography>
+        </Stack>
       </Box>
     </Box>
   )

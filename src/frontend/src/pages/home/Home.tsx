@@ -1,5 +1,5 @@
 import { backend } from '@be/backend'
-import { Button, Input, List, ListItem, Stack } from '@mui/material'
+import { Button, List, ListItem, Stack, TextField } from '@mui/material'
 import { useState } from 'react'
 
 export function Home() {
@@ -7,12 +7,13 @@ export function Home() {
   const [message, setMessage] = useState<string>('')
   return (
     <Stack>
-      <Input
+      <TextField
         value={message}
         onChange={({ target: { value } }) => {
           // update message to send
           setMessage(value)
         }}
+        label={'Name'}
       />
       <Button
         onClick={() => {

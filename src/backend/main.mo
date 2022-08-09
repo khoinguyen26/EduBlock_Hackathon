@@ -10,7 +10,7 @@ import TrieSet "mo:base/TrieSet";
 import List "mo:base/List";
 import Time "mo:base/Time";
 
-actor class EduBlock(argOwnerPrincipal: Text) {
+shared({caller = ownerPrincipal}) actor class EduBlock() {
   private type UserIdentity = Principal;
   private type Set<X> = TrieSet.Set<X>;
   private type HashMap<K, V> = HashMap.HashMap<K, V>;
@@ -47,11 +47,6 @@ actor class EduBlock(argOwnerPrincipal: Text) {
   };
 
   /**
-   * The owner's principal
-   */
-  private let ownerPrincipal : UserIdentity = Principal.fromText(argOwnerPrincipal);
-
-  /**
    * The set of teachers' principals
    */
   private stable var teachers : Set<UserIdentity> = TrieSet.empty();
@@ -75,6 +70,6 @@ actor class EduBlock(argOwnerPrincipal: Text) {
   };
 
   public func greetOwner() : async Text {
-    return "Hello, " # argOwnerPrincipal # "!";
+    return "Hello, " # Principal.toText(ownerPrincipal) # "!";
   };
 };

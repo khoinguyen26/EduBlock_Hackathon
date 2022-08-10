@@ -10,7 +10,7 @@ import TrieSet "mo:base/TrieSet";
 import List "mo:base/List";
 import Time "mo:base/Time";
 
-shared({caller = ownerPrincipal}) actor class EduBlock() {
+shared({caller = owner}) actor class EduBlock() {
   private type UserIdentity = Principal;
   private type Set<X> = TrieSet.Set<X>;
   private type HashMap<K, V> = HashMap.HashMap<K, V>;
@@ -34,16 +34,8 @@ shared({caller = ownerPrincipal}) actor class EduBlock() {
     teacher : UserIdentity;
   };
 
-  private type StudentInformation = {
-    name : Text;
-    birthday : Time;
-    schoolName : Text;
-    address : Text;
-  };
-
   private type Student = {
     grades : [var StudentGrade];
-    information : StudentInformation;
   };
 
   /**
@@ -70,6 +62,15 @@ shared({caller = ownerPrincipal}) actor class EduBlock() {
   };
 
   public func greetOwner() : async Text {
-    return "Hello, " # Principal.toText(ownerPrincipal) # "!";
+    return "Hello, " # Principal.toText(owner) # "!";
+  };
+
+  /**
+   * Add new teachers to the allowed set
+   */
+  public shared({caller}) func addTeachers(newTeachers : [UserIdentity]) : async () {
+    assert (caller == owner);
+    let newTeacherSet : Set<UserIdentity> = TrieSet.fromArray(newTeachers, Principal.hash, Principal.equal);
+    teachers := TrieSet.union(teachers, newTeacherSet, Principal.equal);
   };
 };

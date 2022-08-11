@@ -1,5 +1,5 @@
 import { BaseInterface } from '@fe/constants'
-import { createTheme, ThemeProvider as MUIThemeProvider } from '@mui/material'
+import { createTheme, ThemeProvider as Provider } from '@mui/material'
 import { ReactNode } from 'react'
 
 interface ThemeProviderProps extends BaseInterface {
@@ -10,5 +10,5 @@ const theme = createTheme()
 
 export function ThemeProvider(props: ThemeProviderProps) {
   const { children } = props
-  return <MUIThemeProvider theme={theme}>{children}</MUIThemeProvider>
+  return <Provider theme={theme}>{children}</Provider>
 }

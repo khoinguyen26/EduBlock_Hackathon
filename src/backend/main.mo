@@ -16,16 +16,13 @@ shared({caller = owner}) actor class EduBlock() {
   private type HashMap<K, V> = HashMap.HashMap<K, V>;
   private type Time = Time.Time;
 
-  private type StudentRecordEntry = {
-    name : Text;
-    entryType : Text;
-    score : Float;
-  };
-
   private type StudentSubject = {
     name : Text;
-    recordEntries : [var StudentRecordEntry];
-    teacher : UserIdentity;
+    firstHalfScore : Float;
+    secondHalfScore : Float;
+    finalScore : Float;
+    resitScore : Float;
+    teacher : Text;
   };
 
   private type StudentGrade = {

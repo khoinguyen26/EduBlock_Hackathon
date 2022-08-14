@@ -77,7 +77,7 @@ shared({caller = owner}) actor class EduBlock() {
     return do ? { value };
   };
 
-  private func _optionBreak<T>(value : ?T) : T {
+  private func _optionalBreak<T>(value : ?T) : T {
     switch (value) {
       case (null) Prelude.xxx();
       case (?v) v;

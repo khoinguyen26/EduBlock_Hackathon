@@ -211,6 +211,20 @@ shared({caller = owner}) actor class EduBlock() {
   };
 
   /**
+   * Add new students to the system
+   */
+  public shared({caller}) func addStudents(students : [UserIdentity]) : async Response {
+    if (not _isTeacher(caller)) {
+      return {errorCode = 1; errorMessage = "You are not a teacher"};
+    };
+
+    for (currentStudent in students.vals()) {
+      let _ : Bool = _addStudent(currentStudent);
+    };
+    return {errorCode = 0; errorMessage = "Students added"};
+  };
+
+  /**
    * Get the student by its identity
    */
   public shared({caller}) func getStudent(student : UserIdentity) : async ResponseWithData<Student> {

@@ -251,12 +251,7 @@ shared({caller = owner}) actor class EduBlock() {
       case (?student) {
         switch (_getStudentGrade(student, gradeName)) {
           case (null) return {errorCode = 3; errorMessage = "Grade does not exist"; data = null};
-          case (?v) {
-            if (not (Principal.equal(caller, v.homeTeacher))) {
-              return {errorCode = 4; errorMessage = "You are not the home teacher for this grade"; data = null};
-            };
-            {errorCode = 0; errorMessage = "Grade found"; data = _optional(v)};
-          };
+          case (v) return {errorCode = 0; errorMessage = "Grade found"; data = v};
         };
       };
     };
@@ -273,14 +268,9 @@ shared({caller = owner}) actor class EduBlock() {
     switch (_getStudent(student)) {
       case (null) return {errorCode = 2; errorMessage = "Student does not exist"; data = null};
       case (?student) {
-        switch (_getStudentGrade(student, gradeName)) {
+        switch (_getStudentSubjects(student, gradeName)) {
           case (null) return {errorCode = 3; errorMessage = "Grade does not exist"; data = null};
-          case (?v) {
-            if (not (Principal.equal(caller, v.homeTeacher))) {
-              return {errorCode = 4; errorMessage = "You are not the home teacher for this grade"; data = null};
-            };
-            {errorCode = 0; errorMessage = "Subjects found"; data = _optional(v.subjects)};
-          };
+          case (v) return {errorCode = 0; errorMessage = "Subjects found"; data = v};
         };
       };
     };
@@ -290,18 +280,15 @@ shared({caller = owner}) actor class EduBlock() {
    * Update the student's subjects by grade name
    */
   public shared({caller}) func updateStudentSubjects(studentIdentity : UserIdentity, gradeName : Text, subjects : [StudentSubject]) : async Response {
-    if (not _canGetStudent(caller, studentIdentity)) {
-      return {errorCode = 1; errorMessage = "You can not update the student"};
-    };
     switch (_getStudent(studentIdentity)) {
-      case (null) return {errorCode = 2; errorMessage = "Student does not exist"};
+      case (null) return {errorCode = 1; errorMessage = "Student does not exist"};
       case (?student) {
         let checkedStudent : Student = _addStudentGradeIfNotFound(student, gradeName, caller);
         switch (_getStudentGrade(checkedStudent, gradeName)) {
-          case (null) return {errorCode = 3; errorMessage = "Grade does not exist"};
+          case (null) return {errorCode = 2; errorMessage = "Grade does not exist"};
           case (?studentGrade) {
             if (not (Principal.equal(caller, studentGrade.homeTeacher))) {
-              return {errorCode = 4; errorMessage = "You are not the home teacher for this grade"};
+              return {errorCode = 3; errorMessage = "Only the home teacher can update the subjects"};
             };
             let newStudent : Student = _updateStudentSubjects(checkedStudent, gradeName, subjects);
             _replaceStudent(studentIdentity, newStudent);

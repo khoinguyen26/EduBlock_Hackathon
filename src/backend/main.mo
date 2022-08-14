@@ -9,6 +9,7 @@ import HashMap "mo:base/HashMap";
 import TrieSet "mo:base/TrieSet";
 import List "mo:base/List";
 import Time "mo:base/Time";
+import Prelude "mo:base/Prelude";
 
 shared({caller = owner}) actor class EduBlock() {
   private type UserIdentity = Principal;
@@ -74,6 +75,13 @@ shared({caller = owner}) actor class EduBlock() {
 
   private func _optional<T>(value : T) : ?T {
     return do ? { value };
+  };
+
+  private func _optionBreak<T>(value : ?T) : T {
+    switch (value) {
+      case (null) Prelude.xxx();
+      case (?v) v;
+    };
   };
 
   private func _isOwner(principal : Principal) : Bool {

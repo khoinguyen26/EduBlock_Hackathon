@@ -204,6 +204,13 @@ shared({caller = owner}) actor class EduBlock() {
   };
 
   /**
+   * Check if the user is a teacher
+   */
+  public func isTeacher(identity : UserIdentity) : async Bool {
+    return _isTeacher(identity);
+  };
+
+  /**
    * Add a new student to the system
    */
   public shared({caller}) func addStudent(student : UserIdentity) : async Response {

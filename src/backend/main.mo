@@ -47,6 +47,20 @@ shared({caller = owner}) actor class EduBlock() {
   };
 
   /**
+   * The map of possible responses
+   */
+  private let responses : HashMap<Int, Text> = HashMap.fromIter([
+    (0, "Success"),
+    (1, "You are not the owner of this block"),
+    (2, "You are not a teacher"),
+    (3, "You can not get the student"),
+    (4, "Only the home teacher can do the action"),
+    (5, "Student already exists"),
+    (6, "Student does not exist"),
+    (7, "Grade does not exist")
+  ].vals(), 10, Int.equal, Int.hash);
+
+  /**
    * The set of teachers' principals
    */
   private stable var teachers : Set<UserIdentity> = TrieSet.empty();
@@ -71,6 +85,27 @@ shared({caller = owner}) actor class EduBlock() {
 
   public func greetOwner() : async Text {
     return "Hello, " # Principal.toText(owner) # "!";
+  };
+
+  private func _toResponse(errorCode : Int) : Response {
+    return {
+      errorCode = errorCode;
+      errorMessage = switch (responses.get(errorCode)) {
+        case (null) "Unknown error";
+        case (?x) x;
+      };
+    };
+  };
+
+  private func _toResponseWithData<V>(errorCode : Int, data : ?V) : ResponseWithData<V> {
+    return {
+      errorCode = errorCode;
+      errorMessage = switch (responses.get(errorCode)) {
+        case (null) "Unknown error";
+        case (?x) x;
+      };
+      data = data;
+    };
   };
 
   private func _optional<T>(value : T) : ?T {
@@ -196,11 +231,11 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func addTeachers(newTeachers : [UserIdentity]) : async Response {
     if (not _isOwner(caller)) {
-      return {errorCode = 1; errorMessage = "You are not the owner of this block"};
+      return _toResponse(1);
     };
     let newTeacherSet : Set<UserIdentity> = TrieSet.fromArray(newTeachers, Principal.hash, Principal.equal);
     teachers := TrieSet.union(teachers, newTeacherSet, Principal.equal);
-    return {errorCode = 0; errorMessage = "Added teachers"};
+    return _toResponse(0);
   };
 
   /**
@@ -215,14 +250,14 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func addStudent(student : UserIdentity) : async Response {
     if (not _isTeacher(caller)) {
-      return {errorCode = 1; errorMessage = "You are not a teacher"};
+      return _toResponse(2);
     };
 
     if (not _addStudent(student)) {
-      return {errorCode = 2; errorMessage = "Student already exists"};
+      return _toResponse(5);
     };
 
-    return {errorCode = 0; errorMessage = "Student added"};
+    return _toResponse(0);
   };
 
   /**
@@ -230,13 +265,13 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func addStudents(students : [UserIdentity]) : async Response {
     if (not _isTeacher(caller)) {
-      return {errorCode = 1; errorMessage = "You are not a teacher"};
+      return _toResponse(2);
     };
 
     for (currentStudent in students.vals()) {
       let _ : Bool = _addStudent(currentStudent);
     };
-    return {errorCode = 0; errorMessage = "Students added"};
+    return _toResponse(0);
   };
 
   /**
@@ -244,12 +279,12 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func getStudent(student : UserIdentity) : async ResponseWithData<Student> {
     if (not _canGetStudent(caller, student)) {
-      return {errorCode = 1; errorMessage = "You can not get the student"; data = null};
+      return _toResponseWithData(3, null);
     };
 
     switch (_getStudent(student)) {
-      case (null) return {errorCode = 2; errorMessage = "Student does not exist"; data = null};
-      case (v) return {errorCode = 0; errorMessage = "Student found"; data = v};
+      case (null) return _toResponseWithData(6, null);
+      case (v) return _toResponseWithData(0, v);
     };
   };
 
@@ -258,12 +293,12 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func getStudentGrades(student : UserIdentity) : async ResponseWithData<[StudentGrade]> {
     if (not _canGetStudent(caller, student)) {
-      return {errorCode = 1; errorMessage = "You can not get the student"; data = null};
+      return _toResponseWithData(3, null);
     };
 
     switch (_getStudentGrades(student)) {
-      case (null) return {errorCode = 2; errorMessage = "Student does not exist"; data = null};
-      case (v) return {errorCode = 0; errorMessage = "Student grades found"; data = v};
+      case (null) return _toResponseWithData(6, null);
+      case (v) return _toResponseWithData(0, v);
     };
   };
 
@@ -272,15 +307,15 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func getStudentGrade(student : UserIdentity, gradeName : Text) : async ResponseWithData<StudentGrade> {
     if (not _canGetStudent(caller, student)) {
-      return {errorCode = 1; errorMessage = "You can not get the student"; data = null};
+      return _toResponseWithData(3, null);
     };
 
     switch (_getStudent(student)) {
-      case (null) return {errorCode = 2; errorMessage = "Student does not exist"; data = null};
+      case (null) return _toResponseWithData(6, null);
       case (?student) {
         switch (_getStudentGrade(student, gradeName)) {
-          case (null) return {errorCode = 3; errorMessage = "Grade does not exist"; data = null};
-          case (v) return {errorCode = 0; errorMessage = "Grade found"; data = v};
+          case (null) return _toResponseWithData(7, null);
+          case (v) return _toResponseWithData(0, v);
         };
       };
     };
@@ -291,15 +326,15 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func getStudentSubjects(student : UserIdentity, gradeName : Text) : async ResponseWithData<[StudentSubject]> {
     if (not _canGetStudent(caller, student)) {
-      return {errorCode = 1; errorMessage = "You can not get the student"; data = null};
+      return _toResponseWithData(3, null);
     };
 
     switch (_getStudent(student)) {
-      case (null) return {errorCode = 2; errorMessage = "Student does not exist"; data = null};
+      case (null) return _toResponseWithData(6, null);
       case (?student) {
         switch (_getStudentSubjects(student, gradeName)) {
-          case (null) return {errorCode = 3; errorMessage = "Grade does not exist"; data = null};
-          case (v) return {errorCode = 0; errorMessage = "Subjects found"; data = v};
+          case (null) return _toResponseWithData(7, null);
+          case (v) return _toResponseWithData(0, v);
         };
       };
     };
@@ -310,18 +345,18 @@ shared({caller = owner}) actor class EduBlock() {
    */
   public shared({caller}) func updateStudentSubjects(studentIdentity : UserIdentity, gradeName : Text, subjects : [StudentSubject]) : async Response {
     switch (_getStudent(studentIdentity)) {
-      case (null) return {errorCode = 1; errorMessage = "Student does not exist"};
+      case (null) return _toResponse(6);
       case (?student) {
         let checkedStudent : Student = _addStudentGradeIfNotFound(student, gradeName, caller);
         switch (_getStudentGrade(checkedStudent, gradeName)) {
-          case (null) return {errorCode = 2; errorMessage = "Grade does not exist"};
+          case (null) return _toResponse(7);
           case (?studentGrade) {
             if (not (Principal.equal(caller, studentGrade.homeTeacher))) {
-              return {errorCode = 3; errorMessage = "Only the home teacher can update the subjects"};
+              return _toResponse(4);
             };
             let newStudent : Student = _updateStudentSubjects(checkedStudent, gradeName, subjects);
             _replaceStudent(studentIdentity, newStudent);
-            return {errorCode = 0; errorMessage = "Subjects updated"};
+            return _toResponse(0);
           };
         };
       };

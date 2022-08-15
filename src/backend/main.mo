@@ -227,14 +227,26 @@ shared({caller = owner}) actor class EduBlock() {
   };
 
   /**
-   * Add new teachers to the allowed set
+   * Add teachers to the allowed set
    */
-  public shared({caller}) func addTeachers(newTeachers : [UserIdentity]) : async Response {
+  public shared({caller}) func addTeachers(toAddTeachers : [UserIdentity]) : async Response {
     if (not _isOwner(caller)) {
       return _toResponse(1);
     };
-    let newTeacherSet : Set<UserIdentity> = TrieSet.fromArray(newTeachers, Principal.hash, Principal.equal);
-    teachers := TrieSet.union(teachers, newTeacherSet, Principal.equal);
+    let toAddTeacherSet : Set<UserIdentity> = TrieSet.fromArray(toAddTeachers, Principal.hash, Principal.equal);
+    teachers := TrieSet.union(teachers, toAddTeacherSet, Principal.equal);
+    return _toResponse(0);
+  };
+
+  /**
+   * Remove teachers from the allowed set
+   */
+  public shared({caller}) func removeTeachers(toRemoveTeachers : [UserIdentity]) : async Response {
+    if (not _isOwner(caller)) {
+      return _toResponse(1);
+    };
+    let toRemoveTeacherSet : Set<UserIdentity> = TrieSet.fromArray(toRemoveTeachers, Principal.hash, Principal.equal);
+    teachers := TrieSet.diff(teachers, toRemoveTeacherSet, Principal.equal);
     return _toResponse(0);
   };
 

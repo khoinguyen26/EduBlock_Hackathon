@@ -11,7 +11,7 @@
    * Login
      * The user must have an account on the system to login
 2. Student
-   * See student records
+   * See Student Records
      * The user must login to use this function
      * The user can only see his academic records
 3. Teacher
@@ -24,7 +24,7 @@
      * The user can only see his own classes
      * The user can choose a class and see its student
      * The user can filter his students by name
-   * Update student records
+   * Update Student Records
      * The user must login to use this function
      * The user can only update students of his classes
      * The user can choose a student and see his academic records
@@ -33,7 +33,7 @@
    * View Class
      * The user must login to use this function
      * The user can see created classes
-     * The user can filter his classes by name or year
+     * The user can filter the classes by name or year
    * Create Class
      * The user must login to use this function
      * The user must assign a teacher to the class as a home teacher
@@ -41,7 +41,7 @@
    * View Student
      * The user must login to use this function
      * The user can see registered students
-     * The user can filter his students by name
+     * The user can filter the students by name
    * View Teacher
      * The user must login to use this function
      * The user can see registered teachers
@@ -136,7 +136,7 @@ S --> UC_S_SR : Own Records Only
 
 T --> UC_T_VC
 T --> UC_T_VS
-T --> UC_T_UR
+T --> UC_T_UR : Home Teacher Only
 T --> UC_S_SR
 
 A --> UC_A_CC

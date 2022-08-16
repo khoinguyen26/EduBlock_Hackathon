@@ -1,5 +1,13 @@
 # EduBlock
 
+## Introduction
+
+This is the specification for a student record system that store the student records on the BlockChain network. The system is designed to provide a user-friendly interface for teachers to update their students' academic records and a full replacement of traditional academic record papers.
+
+## About Existing System
+
+Many high schools in Viet Nam use one of existing online systems to store students' academic records and notify their parents about recent records, but they still use traditional record papers for post-graduation & university / college enrollment. Therefore, The teachers find it difficult to update their students' records because they have to update the records on both the online system & the record paper. Moreover, the online system is a centralized system that only the admins and the teachers can see and interact, so there is little transparency for students who want to see their records at any time.
+
 ## User Requirement
 
 ### Main Function

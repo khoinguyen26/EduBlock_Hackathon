@@ -1,9 +1,10 @@
 import { BrowserRouter, useRoutes } from 'react-router-dom'
-import { ROUTES } from './routes'
+import { getRoutes } from './routes'
 
 function Routes() {
-  const routes = useRoutes(ROUTES)
-  return routes
+  const routes = getRoutes({ role: 'guest' })
+  const RouteComponents = useRoutes(routes)
+  return RouteComponents
 }
 
 export function Router() {

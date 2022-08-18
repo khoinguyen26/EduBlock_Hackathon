@@ -76,7 +76,29 @@ module.exports = {
   module: {
     rules: [
       { test: /\.(ts|tsx|jsx)$/, loader: 'ts-loader' },
-      { test: /\.css$/, use: ['style-loader', 'css-loader'] }
+      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+      {
+        test: /\.(png|jpg|gif)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 8192
+            }
+          }
+        ]
+      },
+      {
+        test: /\.svg$/,
+        issuer: /\.[jt]sx?$/,
+        use: [
+          {
+            loader: '@svgr/webpack',
+            options: { icon: false, typescript: true }
+          },
+          'url-loader'
+        ]
+      }
     ]
   },
   plugins: [

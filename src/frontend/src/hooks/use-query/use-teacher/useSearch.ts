@@ -8,7 +8,7 @@ export default function useSearch() {
     const [searchKey, setSearchKey] = useState('');
 
     const searchTeachersQuery = useQuery({
-        queryKey: ['searchTeachers'],
+        queryKey: ['search'],
         queryFn: async () =>
             axios({
                 method: "GET",

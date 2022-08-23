@@ -1,6 +1,6 @@
 import { TEXT } from '@fe/components/layout/text'
 import { AutoAwesomeMosaic, Message } from '@mui/icons-material'
-import { Avatar, Button, Divider, Stack, Typography } from '@mui/material'
+import { Avatar, Box, Button, Divider, Stack, Typography } from '@mui/material'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 // @ts-ignore
 import avatarPng from '@fe/components/layout/assets/png/avatar.png'
@@ -12,8 +12,8 @@ const navItems = [
     icon: <AutoAwesomeMosaic />
   },
   {
-    to: '/app/student',
-    text: TEXT.STUDENT,
+    to: '/app/class',
+    text: TEXT.CLASS,
     icon: <Message />
   }
 ]
@@ -57,19 +57,35 @@ export function VerticalNav() {
             <Button
               key={`${text.split(' ').at(-1)}__${index}`}
               fullWidth={true}
-              startIcon={icon}
+              // startIcon={icon}
               component={RouterLink}
               to={to}
               sx={{
                 backgroundColor: matchedRoute ? '#6B6AB7' : 'transparent',
                 color: matchedRoute ? 'white' : 'black',
+                textTransform: 'initial',
                 ':hover': {
                   backgroundColor: '#6B6AB7',
                   color: 'white'
                 }
               }}
             >
-              <Typography>{text}</Typography>
+              <Stack
+                width={'100%'}
+                direction={'row'}
+                alignItems={'center'}
+              >
+                <Box
+                  width={'30%'}
+                  display={'flex'}
+                  alignItems={'center'}
+                >
+                  {icon}
+                </Box>
+                <Box width={'70%'}>
+                  <Typography>{text}</Typography>
+                </Box>
+              </Stack>
             </Button>
           )
         })}

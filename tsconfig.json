@@ -16,7 +16,8 @@
       "@fe/*": ["frontend/src/*"]
     },
     "resolveJsonModule": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "incremental": true
   },
   "exclude": ["src/declarations/**/*.did", "**/dist"],
   "include": ["src/**/*"]

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 
 
-export default function useSearch() {
+export default function useStudent() {
     const [searchKey, setSearchKey] = useState('');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -15,7 +15,7 @@ export default function useSearch() {
         queryFn: async () =>
             axios({
                 method: "GET",
-                url: "https://api.baserow.io/api/database/rows/table/91165/?user_field_names=true",
+                url: "https://api.baserow.io/api/database/rows/table/91163/?user_field_names=true",
                 headers: {
                     Authorization: "Token XBbPCgV2nXKQ5K2r6fdNnkTiYbjDw6Xf"
                 },

@@ -13,7 +13,7 @@ export function NormalLayout() {
                           "aside main"`}
       gridTemplateRows={'150px auto'}
       gridTemplateColumns={'200px auto'}
-      gap={'5px'}
+      gap={1}
       bgcolor={'#A8A6FE'}
     >
       {/* header (horizontal nav) */}
@@ -35,6 +35,7 @@ export function NormalLayout() {
       <Box
         gridArea={'main'}
         bgcolor={grey[200]}
+        padding={1}
       >
         <Outlet />
       </Box>

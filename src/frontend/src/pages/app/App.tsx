@@ -2,7 +2,8 @@ import {
   GlobalStateProvider,
   ICProvider,
   ThemeProvider,
-  QueryClientProvider
+  QueryClientProvider,
+  LocalizationProvider
 } from '@fe/providers'
 import { Outlet } from 'react-router-dom'
 
@@ -11,9 +12,11 @@ export function App() {
     <QueryClientProvider>
       <GlobalStateProvider>
         <ICProvider>
-          <ThemeProvider>
-            <Outlet />
-          </ThemeProvider>
+          <LocalizationProvider>
+            <ThemeProvider>
+              <Outlet />
+            </ThemeProvider>
+          </LocalizationProvider>
         </ICProvider>
       </GlobalStateProvider>
     </QueryClientProvider>

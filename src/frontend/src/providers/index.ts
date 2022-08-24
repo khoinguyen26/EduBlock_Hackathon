@@ -1,4 +1,5 @@
 export * from './ic'
+export * from './localization'
 export * from './query'
 export * from './state'
 export * from './theme'

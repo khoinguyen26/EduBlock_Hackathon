@@ -356,22 +356,15 @@ shared({caller = owner}) actor class EduBlock() {
    * Update the student's subjects by grade name
    */
   public shared({caller}) func updateStudentSubjects(studentIdentity : UserIdentity, gradeName : Text, subjects : [StudentSubject]) : async Response {
-    switch (_getStudent(studentIdentity)) {
-      case (null) return _toResponse(6);
-      case (?student) {
-        let checkedStudent : Student = _addStudentGradeIfNotFound(student, gradeName, caller);
-        switch (_getStudentGrade(checkedStudent, gradeName)) {
-          case (null) return _toResponse(7);
-          case (?studentGrade) {
-            if (not (Principal.equal(caller, studentGrade.homeTeacher))) {
-              return _toResponse(4);
-            };
-            let newStudent : Student = _updateStudentSubjects(checkedStudent, gradeName, subjects);
-            _replaceStudent(studentIdentity, newStudent);
-            return _toResponse(0);
-          };
-        };
-      };
+    let _ : Bool = _addStudent(studentIdentity); // Add student if does not exist
+    let student : Student = _optionalBreak(_getStudent(studentIdentity));
+    let checkedStudent : Student = _addStudentGradeIfNotFound(student, gradeName, caller);
+    let studentGrade : StudentGrade = _optionalBreak(_getStudentGrade(checkedStudent, gradeName));
+    if (not (Principal.equal(caller, studentGrade.homeTeacher))) {
+      return _toResponse(4);
     };
+    let newStudent : Student = _updateStudentSubjects(checkedStudent, gradeName, subjects);
+    _replaceStudent(studentIdentity, newStudent);
+    return _toResponse(0);
   };
 };

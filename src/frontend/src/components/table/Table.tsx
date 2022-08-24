@@ -41,13 +41,15 @@ export function Table(props: TableProps) {
       columns={columns}
       rows={rows}
       rowCount={rowCount}
+      page={page}
+      onPageChange={(page) => setPage(page)}
+      pageSize={pageSize}
+      onPageSizeChange={(size) => setPageSize(size)}
       sortingMode={'server'}
       onSortModelChange={onSortModelChange}
       filterMode={'server'}
       onFilterModelChange={onFilterModelChange}
       paginationMode={'server'}
-      onPageChange={(page) => setPage(page)}
-      onPageSizeChange={(size) => setPageSize(size)}
       editMode={'row'}
       rowSpacingType={'border'}
       rowsPerPageOptions={[5, 10, 20]}

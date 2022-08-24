@@ -2,10 +2,10 @@ import { BaseInterface } from '@fe/constants'
 import axios, { AxiosRequestConfig } from 'axios'
 import _ from 'lodash'
 
-interface RequestProps extends BaseInterface {
-  token: string
+export interface RequestProps extends BaseInterface {
+  token?: string
   method: 'GET' | 'POST' | 'PATCH'
-  baseUrl: string
+  baseUrl?: string
   endpoint: string
   query?: object
   body?: object

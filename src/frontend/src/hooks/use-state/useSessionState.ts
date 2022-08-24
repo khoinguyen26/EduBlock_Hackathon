@@ -9,5 +9,5 @@ interface UseSessionStateProps extends BaseInterface {
 export function useSessionState(props: UseSessionStateProps) {
   const { store: storeName } = props
   const [state, setState] = useAtom(sessionStorage[storeName])
-  return [state, setState]
+  return { state, setState }
 }

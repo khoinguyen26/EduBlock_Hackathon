@@ -1,6 +1,8 @@
+import { useConnect, useProviders } from '@connect2ic/react'
 import { Img } from '@fe/components'
-import { Box, Button, Stack, Typography } from '@mui/material'
-
+import { useAdminLogin } from '@fe/hooks/use-query'
+import { Alert, Box, Button, Snackbar, Stack, Typography } from '@mui/material'
+import { useState } from 'react'
 // @ts-ignore
 import laptopPng from './assets/png/laptop.png'
 // @ts-ignore
@@ -13,6 +15,21 @@ const TEXT = {
 }
 
 export function Login() {
+  const providers = useProviders()
+
+  const { login } = useAdminLogin()
+
+  const {
+    connect: connectToIC,
+    principal,
+    status
+  } = useConnect({
+    onConnect({ provider }) {}
+    // onDisconnect() {}
+  })
+
+  const [notificationOpen, setNotificationOpen] = useState(false)
+
   return (
     <Box
       display={'grid'}
@@ -40,11 +57,32 @@ export function Login() {
               color: 'white',
               textTransform: 'initial'
             }}
+            onClick={() => {
+              setNotificationOpen(true)
+              if (status !== 'connected')
+                connectToIC((providers[0] as any).meta.id)
+              login()
+            }}
           >
             <Typography variant={'subtitle2'}>
               {TEXT.CONNECT_TO_PLUG}
             </Typography>
           </Button>
+          <Snackbar
+            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+            open={notificationOpen}
+            onClose={() => setNotificationOpen(false)}
+            autoHideDuration={5000}
+          >
+            <Alert
+              onClose={() => setNotificationOpen(false)}
+              sx={{
+                width: '100%'
+              }}
+            >
+              <Typography>{status}</Typography>
+            </Alert>
+          </Snackbar>
         </Stack>
       </Box>
       <Box

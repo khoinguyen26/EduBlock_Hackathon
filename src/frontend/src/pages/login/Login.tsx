@@ -1,7 +1,20 @@
 import { useConnect, useProviders } from '@connect2ic/react'
 import { Img } from '@fe/components'
-import { useAdminLogin } from '@fe/hooks/use-query'
-import { Alert, Box, Button, Snackbar, Stack, Typography } from '@mui/material'
+import {
+  useAdminLogin,
+  useStudentLogin,
+  useTeacherLogin
+} from '@fe/hooks/use-query'
+import {
+  Alert,
+  Box,
+  Button,
+  Snackbar,
+  Stack,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from '@mui/material'
 import { useState } from 'react'
 // @ts-ignore
 import laptopPng from './assets/png/laptop.png'
@@ -14,21 +27,31 @@ const TEXT = {
   CONNECT_TO_PLUG: 'Connect to Plug'
 }
 
+const ROLE = {
+  1: 'admin',
+  2: 'teacher',
+  3: 'student'
+}
+
 export function Login() {
   const providers = useProviders()
 
-  const { login } = useAdminLogin()
+  const { login: loginAsAdmin } = useAdminLogin()
+  const { login: loginAsTeacher } = useTeacherLogin()
+  const { login: loginAsStudent } = useStudentLogin()
 
-  const {
-    connect: connectToIC,
-    principal,
-    status
-  } = useConnect({
-    onConnect({ provider }) {}
-    // onDisconnect() {}
-  })
+  const { connect: connectToIC, principal, status } = useConnect()
 
   const [notificationOpen, setNotificationOpen] = useState(false)
+  const [selectedRole, setSelectedRole] = useState(Object.keys(ROLE).at(-1))
+
+  console.log(selectedRole)
+
+  const login = {
+    1: loginAsAdmin,
+    2: loginAsTeacher,
+    3: loginAsStudent
+  }
 
   return (
     <Box
@@ -61,13 +84,28 @@ export function Login() {
               setNotificationOpen(true)
               if (status !== 'connected')
                 connectToIC((providers[0] as any).meta.id)
-              login()
+              login[selectedRole]()
             }}
           >
             <Typography variant={'subtitle2'}>
               {TEXT.CONNECT_TO_PLUG}
             </Typography>
           </Button>
+          <ToggleButtonGroup
+            value={selectedRole}
+            onChange={(_, value) => {
+              setSelectedRole(value)
+            }}
+            exclusive={true}
+          >
+            {Object.keys(ROLE).map((roleId) => (
+              <ToggleButton value={roleId}>
+                <Typography textTransform={'capitalize'}>
+                  {ROLE[roleId]}
+                </Typography>
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
           <Snackbar
             anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
             open={notificationOpen}

@@ -1,3 +1,10 @@
+import {
+  GlobalStateProvider,
+  ICProvider,
+  LocalizationProvider,
+  QueryClientProvider,
+  ThemeProvider
+} from '@fe/providers'
 import { Router } from '@fe/routes'
 
 import '@fontsource/roboto/300.css'
@@ -14,6 +21,17 @@ import '@fe/styles.css'
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
-    <Router />
+    <QueryClientProvider>
+      <GlobalStateProvider>
+        <ICProvider>
+          <LocalizationProvider>
+            <ThemeProvider>
+              {/* <Outlet /> */}
+              <Router />
+            </ThemeProvider>
+          </LocalizationProvider>
+        </ICProvider>
+      </GlobalStateProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 )

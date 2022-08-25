@@ -65,6 +65,7 @@ export function useAdminLogin(props?: UseAdminLoginProps) {
   }, [principal])
 
   useEffect(() => {
+    setSearch('')
     if (account.accountId.length > 0 && isConnected && account.role.id === 1)
       navigate('/app')
   }, [account])

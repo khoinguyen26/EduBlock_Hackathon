@@ -65,6 +65,7 @@ export function useStudentLogin(props?: UseStudentLoginProps) {
   }, [principal])
 
   useEffect(() => {
+    setSearch('')
     if (account.accountId.length > 0 && isConnected && account.role.id === 3)
       navigate('/school-report')
   }, [account])

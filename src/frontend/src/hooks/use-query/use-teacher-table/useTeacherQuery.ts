@@ -121,8 +121,8 @@ export function useTeacherQuery(props: UseTeacherQueryProps) {
         {
           endpoint: ENDPOINT,
           page,
-          pageSize,
-          search: searchDebounced
+          pageSize
+          // search: searchDebounced
         }
       ],
       onSettled(data, error) {

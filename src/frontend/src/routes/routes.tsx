@@ -14,9 +14,9 @@ import {
 import { Navigate, RouteObject } from 'react-router-dom'
 
 const ROLE = {
-  ADMIN: 'admin',
-  TEACHER: 'teacher',
-  STUDENT: 'student',
+  ADMIN: 1,
+  TEACHER: 2,
+  STUDENT: 3,
   GUEST: 'guest',
   ANY: 'any'
 } as const

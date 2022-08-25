@@ -19,9 +19,8 @@ export function useAdminLogin(props?: UseAdminLoginProps) {
   const {
     queryResult,
     state: {
-      apiData: { admins },
       queryOptions: {
-        search: { search, setSearch }
+        search: { setSearch }
       }
     }
   } = useAdminQuery({
@@ -66,7 +65,8 @@ export function useAdminLogin(props?: UseAdminLoginProps) {
   }, [principal])
 
   useEffect(() => {
-    if (account.accountId.length > 0 && isConnected) navigate('/app')
+    if (account.accountId.length > 0 && isConnected && account.role.id === 1)
+      navigate('/app')
   }, [account])
 
   function login() {

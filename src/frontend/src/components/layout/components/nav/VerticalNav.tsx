@@ -3,7 +3,7 @@ import { AutoAwesomeMosaic, Message } from '@mui/icons-material'
 import { Avatar, Box, Button, Divider, Stack, Typography } from '@mui/material'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 // @ts-ignore
-import avatarPng from '@fe/components/layout/assets/png/avatar.png'
+import { usePersistentState } from '@fe/hooks'
 
 const navItems = [
   {
@@ -20,6 +20,7 @@ const navItems = [
 
 export function VerticalNav() {
   const location = useLocation()
+  const { state: account } = usePersistentState({ store: 'account' })
 
   return (
     <Stack
@@ -35,13 +36,15 @@ export function VerticalNav() {
       >
         <Avatar
           alt={'avt'}
-          src={avatarPng}
+          // src={avatarPng}
           sx={{
             width: 80,
             height: 80
           }}
-        />
-        <Typography>{TEXT.USERNAME}</Typography>
+        >{`${account.firstName[0]}${account.lastName[0]}`}</Avatar>
+        <Typography textTransform={'capitalize'}>
+          {account.firstName} {account.lastName}
+        </Typography>
       </Stack>
       <Stack
         paddingX={1}

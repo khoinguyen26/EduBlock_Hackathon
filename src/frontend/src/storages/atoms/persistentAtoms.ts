@@ -17,26 +17,28 @@ interface AccountInterface extends BaseInterface {
   gender: string
 }
 
-export const persistentStorage = {
-  account: atomWithStorage<AccountInterface>('account', {
+export const defaultAccountValue: AccountInterface = {
+  id: 0,
+  order: '',
+  accountId: '',
+  firstName: '',
+  lastName: '',
+  dateOfBirth: '',
+  address: '',
+  principalId: '',
+  role: {
     id: 0,
-    order: '',
-    accountId: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    address: '',
-    principalId: '',
-    role: {
-      id: 0,
-      value: ''
-    },
-    token: {
-      id: 0,
-      value: ''
-    },
-    phone: '',
-    email: '',
-    gender: ''
-  })
+    value: ''
+  },
+  token: {
+    id: 0,
+    value: ''
+  },
+  phone: '',
+  email: '',
+  gender: ''
+}
+
+export const persistentStorage = {
+  account: atomWithStorage<AccountInterface>('account', defaultAccountValue)
 }

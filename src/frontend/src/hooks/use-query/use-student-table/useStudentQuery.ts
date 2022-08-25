@@ -173,9 +173,7 @@ export function useStudentQuery(props: UseStudentQueryProps) {
         user_field_names: true,
         page: page + 1,
         size: pageSize,
-        ...(typeof searchDebounced === 'string' && searchDebounced.length > 0
-          ? { search: searchDebounced }
-          : {})
+        ...(typeof search === 'string' && search.length > 0 ? { search } : {})
       }
     }
   })

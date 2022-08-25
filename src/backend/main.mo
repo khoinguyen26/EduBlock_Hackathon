@@ -65,7 +65,8 @@ shared({caller = owner}) actor class EduBlock() {
     (4, "Only the home teacher can do the action"),
     (5, "Student already exists"),
     (6, "Student does not exist"),
-    (7, "Grade does not exist")
+    (7, "Grade does not exist"),
+    (8, "You cannot update the student grade")
   ].vals(), 10, Int.equal, Int.hash);
 
   /**
@@ -153,10 +154,7 @@ shared({caller = owner}) actor class EduBlock() {
     if (Principal.equal(caller, student)) {
       return true;
     };
-    if (_isOwner(caller)) {
-      return true;
-    };
-    if (_isTeacher(caller)) {
+    if (_isOwner(caller) or _isTeacher(caller)) {
       return true;
     };
     return false;
@@ -261,6 +259,16 @@ shared({caller = owner}) actor class EduBlock() {
         return _updateStudentGrade(student, gradeName, newGrade);
       };
     };
+  };
+
+  private func _canUpdateStudentGrade(caller : UserIdentity, studentGrade : StudentGrade) : Bool {
+    if (Principal.equal(caller, studentGrade.homeTeacher)) {
+      return true;
+    };
+    if (_isOwner(caller)) {
+      return true;
+    };
+    return false;
   };
 
   /**
@@ -393,11 +401,14 @@ shared({caller = owner}) actor class EduBlock() {
    * Update the student's subjects by grade name
    */
   public shared({caller}) func updateStudentSubjects(studentIdentity : UserIdentity, gradeName : Text, subjects : [StudentSubject]) : async Response {
+    if ((not _isOwner(caller)) and (not _isTeacher(caller))) {
+      return _toResponse(8);
+    };
     let _ : Bool = _addStudent(studentIdentity); // Add student if does not exist
     let student : Student = _optionalBreak(_getStudent(studentIdentity));
     let checkedStudent : Student = _addStudentGradeIfNotFound(student, gradeName, caller);
     let studentGrade : StudentGrade = _optionalBreak(_getStudentGrade(checkedStudent, gradeName));
-    if (not (Principal.equal(caller, studentGrade.homeTeacher))) {
+    if (not _canUpdateStudentGrade(caller, studentGrade)) {
       return _toResponse(4);
     };
     let newStudent : Student = _updateStudentSubjects(checkedStudent, gradeName, subjects);

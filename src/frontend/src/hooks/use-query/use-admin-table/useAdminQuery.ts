@@ -121,8 +121,8 @@ export function useAdminQuery(props: UseAdminQueryProps) {
         {
           endpoint: ENDPOINT,
           page,
-          pageSize,
-          search: searchDebounced
+          pageSize
+          // search: searchDebounced
         }
       ],
       onSettled(data, error) {

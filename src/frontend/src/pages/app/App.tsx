@@ -1,24 +1,21 @@
-import {
-  GlobalStateProvider,
-  ICProvider,
-  ThemeProvider,
-  QueryClientProvider,
-  LocalizationProvider
-} from '@fe/providers'
-import { Outlet } from 'react-router-dom'
+import { usePersistentState } from '@fe/hooks'
+import { defaultAccountValue } from '@fe/storages/atoms/persistentAtoms'
+import { useEffect } from 'react'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 export function App() {
-  return (
-    <QueryClientProvider>
-      <GlobalStateProvider>
-        <ICProvider>
-          <LocalizationProvider>
-            <ThemeProvider>
-              <Outlet />
-            </ThemeProvider>
-          </LocalizationProvider>
-        </ICProvider>
-      </GlobalStateProvider>
-    </QueryClientProvider>
-  )
+  const navigate = useNavigate()
+  const { state: account, setState: setAccount } = usePersistentState({
+    store: 'account'
+  })
+
+  useEffect(() => {
+    setAccount(defaultAccountValue)
+  }, [])
+
+  useEffect(() => {
+    if (account.accountId.length === 0) navigate('/login')
+  }, [account])
+
+  return <Outlet />
 }

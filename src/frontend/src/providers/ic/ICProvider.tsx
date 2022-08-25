@@ -1,13 +1,13 @@
 import * as backend from '@be/backend'
 import { createClient } from '@connect2ic/core'
-import { defaultProviders } from '@connect2ic/core/providers'
+import { PlugWallet } from '@connect2ic/core/providers'
 import { Connect2ICProvider as Provider } from '@connect2ic/react'
 import { ReactNode } from 'react'
 
 import { BaseInterface } from '@fe/constants'
 
 const client = createClient({
-  providers: defaultProviders,
+  providers: [new PlugWallet()],
   canisters: { backend }
 })
 

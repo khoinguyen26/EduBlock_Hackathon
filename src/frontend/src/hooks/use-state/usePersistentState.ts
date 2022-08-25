@@ -9,5 +9,5 @@ interface UseGlobalStateProps extends BaseInterface {
 export function usePersistentState(props: UseGlobalStateProps) {
   const { store: storeName } = props
   const [state, setState] = useAtom(persistentStorage[storeName])
-  return [state, setState]
+  return { state, setState }
 }

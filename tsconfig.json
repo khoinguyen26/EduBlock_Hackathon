@@ -17,7 +17,8 @@
     },
     "resolveJsonModule": true,
     "target": "ESNext",
-    "incremental": true
+    "incremental": true,
+    "moduleResolution": "Node"
   },
   "exclude": ["src/declarations/**/*.did", "**/dist"],
   "include": ["src/**/*"]

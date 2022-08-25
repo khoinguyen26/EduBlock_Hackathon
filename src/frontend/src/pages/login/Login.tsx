@@ -45,8 +45,6 @@ export function Login() {
   const [notificationOpen, setNotificationOpen] = useState(false)
   const [selectedRole, setSelectedRole] = useState(Object.keys(ROLE).at(-1))
 
-  console.log(selectedRole)
-
   const login = {
     1: loginAsAdmin,
     2: loginAsTeacher,

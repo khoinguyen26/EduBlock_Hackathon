@@ -65,6 +65,7 @@ export function useTeacherLogin(props?: UseTeacherLoginProps) {
   }, [principal])
 
   useEffect(() => {
+    setSearch('')
     if (account.accountId.length > 0 && isConnected && account.role.id === 2)
       navigate('/app')
   }, [account])

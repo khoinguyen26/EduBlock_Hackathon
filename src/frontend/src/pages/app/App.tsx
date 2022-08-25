@@ -1,17 +1,11 @@
 import { usePersistentState } from '@fe/hooks'
-import {
-  GlobalStateProvider,
-  ICProvider,
-  LocalizationProvider,
-  QueryClientProvider,
-  ThemeProvider
-} from '@fe/providers'
 import { defaultAccountValue } from '@fe/storages/atoms/persistentAtoms'
 import { useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
 
 export function App() {
-  const { setState: setAccount } = usePersistentState({
+  const navigate = useNavigate()
+  const { state: account, setState: setAccount } = usePersistentState({
     store: 'account'
   })
 
@@ -19,17 +13,9 @@ export function App() {
     setAccount(defaultAccountValue)
   }, [])
 
-  return (
-    <QueryClientProvider>
-      <GlobalStateProvider>
-        <ICProvider>
-          <LocalizationProvider>
-            <ThemeProvider>
-              <Outlet />
-            </ThemeProvider>
-          </LocalizationProvider>
-        </ICProvider>
-      </GlobalStateProvider>
-    </QueryClientProvider>
-  )
+  useEffect(() => {
+    if (account.accountId.length === 0) navigate('/login')
+  }, [account])
+
+  return <Outlet />
 }

@@ -12,6 +12,7 @@ import Time "mo:base/Time";
 import Prelude "mo:base/Prelude";
 
 shared({caller = owner}) actor class EduBlock() {
+  private type Time = Time.Time;
   private type UserIdentity = Principal;
   private type Set<X> = TrieSet.Set<X>;
   private type HashMap<K, V> = HashMap.HashMap<K, V>;
@@ -33,6 +34,13 @@ shared({caller = owner}) actor class EduBlock() {
 
   private type Student = {
     grades : [StudentGrade];
+  };
+
+  private type StudentLog = {
+    oldStudent : ?Student;
+    newStudent : Student;
+    teacher : UserIdentity;
+    timestamp : Time;
   };
 
   private type Response = {
@@ -57,7 +65,8 @@ shared({caller = owner}) actor class EduBlock() {
     (4, "Only the home teacher can do the action"),
     (5, "Student already exists"),
     (6, "Student does not exist"),
-    (7, "Grade does not exist")
+    (7, "Grade does not exist"),
+    (8, "You cannot update the student grade")
   ].vals(), 10, Int.equal, Int.hash);
 
   /**
@@ -71,12 +80,20 @@ shared({caller = owner}) actor class EduBlock() {
   private stable var studentEntries : [(UserIdentity, Student)] = [];
   private let students : HashMap<UserIdentity, Student> = HashMap.fromIter(studentEntries.vals(), 10, Principal.equal, Principal.hash);
 
+  /**
+   * The map of history on students' principals to their records
+   */
+  private stable var studentLogEntries : [(UserIdentity, [StudentLog])] = [];
+  private let studentLogs : HashMap<UserIdentity, [StudentLog]> = HashMap.fromIter(studentLogEntries.vals(), 10, Principal.equal, Principal.hash);
+
   system func preupgrade() {
     studentEntries := Iter.toArray(students.entries());
+    studentLogEntries := Iter.toArray(studentLogs.entries());
   };
 
   system func postupgrade() {
     studentEntries := [];
+    studentLogEntries := [];
   };
 
   public func greet(name : Text) : async Text {
@@ -137,7 +154,7 @@ shared({caller = owner}) actor class EduBlock() {
     if (Principal.equal(caller, student)) {
       return true;
     };
-    if (_isTeacher(caller)) {
+    if (_isOwner(caller) or _isTeacher(caller)) {
       return true;
     };
     return false;
@@ -152,6 +169,24 @@ shared({caller = owner}) actor class EduBlock() {
       case (null) return false;
       case (_) return true;
     };
+  };
+
+  private func _getStudentLog(student : UserIdentity) : [StudentLog] {
+    return switch (studentLogs.get(student)) {
+      case (null) [];
+      case (?x) x;
+    };
+  };
+
+  private func _addStudentToLog(identity : UserIdentity, oldStudent : ?Student, newStudent : Student, teacher : UserIdentity) : () {
+    let oldLogs : [StudentLog] = _getStudentLog(identity);
+    let newLogs : [StudentLog] = Array.append(oldLogs, [{
+      oldStudent = oldStudent;
+      newStudent = newStudent;
+      timestamp = Time.now();
+      teacher = teacher;
+    }]);
+    studentLogs.put(identity, newLogs);
   };
 
   private func _replaceStudent(student : UserIdentity, newStudent : Student) : () {
@@ -224,6 +259,16 @@ shared({caller = owner}) actor class EduBlock() {
         return _updateStudentGrade(student, gradeName, newGrade);
       };
     };
+  };
+
+  private func _canUpdateStudentGrade(caller : UserIdentity, studentGrade : StudentGrade) : Bool {
+    if (Principal.equal(caller, studentGrade.homeTeacher)) {
+      return true;
+    };
+    if (_isOwner(caller)) {
+      return true;
+    };
+    return false;
   };
 
   /**
@@ -356,15 +401,30 @@ shared({caller = owner}) actor class EduBlock() {
    * Update the student's subjects by grade name
    */
   public shared({caller}) func updateStudentSubjects(studentIdentity : UserIdentity, gradeName : Text, subjects : [StudentSubject]) : async Response {
+    if ((not _isOwner(caller)) and (not _isTeacher(caller))) {
+      return _toResponse(8);
+    };
     let _ : Bool = _addStudent(studentIdentity); // Add student if does not exist
     let student : Student = _optionalBreak(_getStudent(studentIdentity));
     let checkedStudent : Student = _addStudentGradeIfNotFound(student, gradeName, caller);
     let studentGrade : StudentGrade = _optionalBreak(_getStudentGrade(checkedStudent, gradeName));
-    if (not (Principal.equal(caller, studentGrade.homeTeacher))) {
+    if (not _canUpdateStudentGrade(caller, studentGrade)) {
       return _toResponse(4);
     };
     let newStudent : Student = _updateStudentSubjects(checkedStudent, gradeName, subjects);
     _replaceStudent(studentIdentity, newStudent);
+    _addStudentToLog(studentIdentity, _optional(checkedStudent), newStudent, caller);
     return _toResponse(0);
+  };
+
+  /**
+   * Get the student log of a student
+   */
+  public shared({caller}) func getStudentLog(student : UserIdentity) : async ResponseWithData<[StudentLog]> {
+    if (not _canGetStudent(caller, student)) {
+      return _toResponseWithData(3, null);
+    };
+
+    return _toResponseWithData(0, _optional(_getStudentLog(student)));
   };
 };

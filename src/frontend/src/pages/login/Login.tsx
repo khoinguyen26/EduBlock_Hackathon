@@ -15,7 +15,7 @@ import {
   ToggleButtonGroup,
   Typography
 } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // @ts-ignore
 import laptopPng from './assets/png/laptop.png'
 // @ts-ignore
@@ -36,20 +36,45 @@ const ROLE = {
 export function Login() {
   const providers = useProviders()
 
-  const { login: loginAsAdmin } = useAdminLogin()
-  const { login: loginAsTeacher } = useTeacherLogin()
-  const { login: loginAsStudent } = useStudentLogin()
-
-  const { connect: connectToIC, principal, status } = useConnect()
-
   const [notificationOpen, setNotificationOpen] = useState(false)
   const [selectedRole, setSelectedRole] = useState(Object.keys(ROLE).at(-1))
+
+  const {
+    login: loginAsAdmin,
+    state: {
+      role: { setRole: updateAdminRole }
+    }
+  } = useAdminLogin()
+  const {
+    login: loginAsTeacher,
+    state: {
+      role: { setRole: updateTeacherRole }
+    }
+  } = useTeacherLogin()
+  const {
+    login: loginAsStudent,
+    state: {
+      role: { setRole: updateStudentRole }
+    }
+  } = useStudentLogin()
+
+  const { connect: connectToIC, principal, status } = useConnect()
 
   const login = {
     1: loginAsAdmin,
     2: loginAsTeacher,
     3: loginAsStudent
   }
+
+  const loginRoleSetter = {
+    1: updateAdminRole,
+    2: updateTeacherRole,
+    3: updateStudentRole
+  }
+
+  useEffect(() => {
+    loginRoleSetter[selectedRole](Number(selectedRole))
+  }, [selectedRole])
 
   return (
     <Box
@@ -97,7 +122,10 @@ export function Login() {
             exclusive={true}
           >
             {Object.keys(ROLE).map((roleId) => (
-              <ToggleButton value={roleId}>
+              <ToggleButton
+                value={roleId}
+                key={`${ROLE[roleId]}__${roleId}`}
+              >
                 <Typography textTransform={'capitalize'}>
                   {ROLE[roleId]}
                 </Typography>

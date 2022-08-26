@@ -1,7 +1,7 @@
 import { BaseInterface } from '@fe/constants'
 import { useDebounce, usePersistentState } from '@fe/hooks'
 import { useQuery } from '@fe/hooks/use-query/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 interface UseStudentQueryProps extends BaseInterface {
   initialProps: {
@@ -9,6 +9,7 @@ interface UseStudentQueryProps extends BaseInterface {
     pageSize: number
     search?: string
   }
+  autoFetch?: true | false
   sideEffectFunctions?: {
     onError?: (error) => void
     onSuccess?: (data) => void
@@ -85,6 +86,7 @@ export function useStudentQuery(props: UseStudentQueryProps) {
   })
   const {
     initialProps,
+    autoFetch,
     sideEffectFunctions: {
       onError: onErrorCallback,
       onSuccess: onSuccessCallback,
@@ -92,15 +94,16 @@ export function useStudentQuery(props: UseStudentQueryProps) {
     }
   }: UseStudentQueryProps = {
     ...props,
-    ...(typeof props.sideEffectFunctions === 'undefined'
-      ? {
-          sideEffectFunctions: {
+    autoFetch: typeof props.autoFetch === 'undefined' ? false : props.autoFetch,
+    sideEffectFunctions: {
+      ...(typeof props.sideEffectFunctions === 'undefined'
+        ? {
             onError(error) {},
             onSuccess(data) {},
             onSettled(data, error) {}
           }
-        }
-      : props.sideEffectFunctions)
+        : props.sideEffectFunctions)
+    }
   }
   const [students, setStudents] = useState<any[]>([])
   const [pagination, setPagination] = useState({})
@@ -114,15 +117,19 @@ export function useStudentQuery(props: UseStudentQueryProps) {
     delay: 500
   })
 
+  useEffect(() => {
+    setSearch('')
+  }, [])
+
   const queryResult = useQuery({
     options: {
-      enabled: false,
+      enabled: autoFetch,
       queryKey: [
         {
           endpoint: ENDPOINT,
           page,
-          pageSize
-          // search: searchDebounced
+          pageSize,
+          search
         }
       ],
       onSettled(data, error) {

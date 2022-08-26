@@ -1,13 +1,19 @@
 import { useConnect } from '@connect2ic/react'
 import { BaseInterface } from '@fe/constants'
 import { usePersistentState } from '@fe/hooks'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useTeacherQuery } from './useTeacherQuery'
 
-interface UseTeacherLoginProps extends BaseInterface {}
+interface UseTeacherLoginProps extends BaseInterface {
+  // role: number
+}
 
 export function useTeacherLogin(props?: UseTeacherLoginProps) {
+  // const { role } = props
+
+  const [role, setRole] = useState(3)
+
   const { isConnected, principal } = useConnect()
 
   const navigate = useNavigate()
@@ -60,9 +66,19 @@ export function useTeacherLogin(props?: UseTeacherLoginProps) {
   })
 
   useEffect(() => {
-    if (typeof principal === 'string' && principal.length > 0 && isConnected)
+    console.log('teacherLoginRole', role)
+    if (role !== 2) setSearch('')
+  }, [role])
+
+  useEffect(() => {
+    if (
+      role === 2 &&
+      typeof principal === 'string' &&
+      principal.length > 0 &&
+      isConnected
+    )
       setSearch(principal)
-  }, [principal])
+  }, [principal, role])
 
   useEffect(() => {
     setSearch('')
@@ -74,5 +90,5 @@ export function useTeacherLogin(props?: UseTeacherLoginProps) {
     queryResult.refetch()
   }
 
-  return { queryResult, login }
+  return { queryResult, login, state: { role: { role, setRole } } }
 }

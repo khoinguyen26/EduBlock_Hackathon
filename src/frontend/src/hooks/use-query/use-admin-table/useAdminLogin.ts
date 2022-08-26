@@ -1,13 +1,19 @@
 import { useConnect } from '@connect2ic/react'
 import { BaseInterface } from '@fe/constants'
 import { usePersistentState } from '@fe/hooks'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAdminQuery } from './useAdminQuery'
 
-interface UseAdminLoginProps extends BaseInterface {}
+interface UseAdminLoginProps extends BaseInterface {
+  // role: number
+}
 
 export function useAdminLogin(props?: UseAdminLoginProps) {
+  // const { role } = props
+
+  const [role, setRole] = useState(3)
+
   const { isConnected, principal } = useConnect()
 
   const navigate = useNavigate()
@@ -20,7 +26,7 @@ export function useAdminLogin(props?: UseAdminLoginProps) {
     queryResult,
     state: {
       queryOptions: {
-        search: { setSearch }
+        search: { search, setSearch }
       }
     }
   } = useAdminQuery({
@@ -60,9 +66,19 @@ export function useAdminLogin(props?: UseAdminLoginProps) {
   })
 
   useEffect(() => {
-    if (typeof principal === 'string' && principal.length > 0 && isConnected)
+    console.log('adminLoginRole', role)
+    if (role !== 1) setSearch('')
+  }, [role])
+
+  useEffect(() => {
+    if (
+      role === 1 &&
+      typeof principal === 'string' &&
+      principal.length > 0 &&
+      isConnected
+    )
       setSearch(principal)
-  }, [principal])
+  }, [principal, role])
 
   useEffect(() => {
     setSearch('')
@@ -74,5 +90,5 @@ export function useAdminLogin(props?: UseAdminLoginProps) {
     queryResult.refetch()
   }
 
-  return { queryResult, login }
+  return { queryResult, login, state: { role: { role, setRole } } }
 }

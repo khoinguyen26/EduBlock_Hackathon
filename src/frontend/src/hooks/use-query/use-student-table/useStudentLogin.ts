@@ -26,7 +26,7 @@ export function useStudentLogin(props?: UseStudentLoginProps) {
     queryResult,
     state: {
       queryOptions: {
-        search: { setSearch }
+        search: { search, setSearch }
       }
     }
   } = useStudentQuery({
@@ -58,7 +58,8 @@ export function useStudentLogin(props?: UseStudentLoginProps) {
             token: {
               id: account.token.id,
               value: account.token.value
-            }
+            },
+            ethnic: account.ethnic
           }))
         }
       }
@@ -69,6 +70,9 @@ export function useStudentLogin(props?: UseStudentLoginProps) {
     console.log('studentLoginRole', role)
     if (role !== 3) setSearch('')
   }, [role])
+
+  useEffect(() => {}, [search])
+  console.log('student search', search)
 
   useEffect(() => {
     if (

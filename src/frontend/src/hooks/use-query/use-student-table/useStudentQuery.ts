@@ -69,6 +69,10 @@ const apiFields = [
   {
     localPropName: 'gender',
     remotePropName: 'Gender'
+  },
+  {
+    localPropName: 'ethnic',
+    remotePropName: 'Ethnic'
   }
 ]
 

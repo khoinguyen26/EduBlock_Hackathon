@@ -26,7 +26,7 @@ export function useTeacherLogin(props?: UseTeacherLoginProps) {
     queryResult,
     state: {
       queryOptions: {
-        search: { setSearch }
+        search: { search, setSearch }
       }
     }
   } = useTeacherQuery({
@@ -69,6 +69,9 @@ export function useTeacherLogin(props?: UseTeacherLoginProps) {
     console.log('teacherLoginRole', role)
     if (role !== 2) setSearch('')
   }, [role])
+
+  useEffect(() => {}, [search])
+  console.log('teacher search', search)
 
   useEffect(() => {
     if (

@@ -70,6 +70,9 @@ export function useAdminLogin(props?: UseAdminLoginProps) {
     if (role !== 1) setSearch('')
   }, [role])
 
+  useEffect(() => {}, [search])
+  console.log('admin search', search)
+
   useEffect(() => {
     if (
       role === 1 &&

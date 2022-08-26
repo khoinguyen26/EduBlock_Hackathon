@@ -73,7 +73,9 @@ export function Login() {
   }
 
   useEffect(() => {
-    loginRoleSetter[selectedRole](Number(selectedRole))
+    Object.values(loginRoleSetter).forEach((setter) => {
+      setter(Number(selectedRole))
+    })
   }, [selectedRole])
 
   return (

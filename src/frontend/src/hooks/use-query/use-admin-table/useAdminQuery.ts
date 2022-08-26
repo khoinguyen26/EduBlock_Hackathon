@@ -119,7 +119,8 @@ export function useAdminQuery(props: UseAdminQueryProps) {
   })
 
   useEffect(() => {
-    setSearch('')
+    console.log('updateSearch')
+    setSearch(initialProps.search)
   }, [])
 
   const queryResult = useQuery({

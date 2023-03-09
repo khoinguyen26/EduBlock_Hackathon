@@ -25,8 +25,9 @@ export function useQuery(props: UseQueryProps): UseQueryResult {
   })
 
   const query = useRQQuery({
-    queryFn: (context) => request({ token, ...requestOptions }),
-    ...options
+    cacheTime: 0,
+    ...options,
+    queryFn: (context) => request({ token, ...requestOptions })
   })
 
   return query
